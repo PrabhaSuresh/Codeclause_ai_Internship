@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Sentiment Analysis</title>
+    <style>
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 2rem;
+            text-align: center;
+            width: 100%;
+            animation: slideInDown 0.7s ease-out;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            font-size: 1.2rem;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            padding: 1rem;
+            background-color: #333;
+            width: 100%;
+        }
+
+        nav a {
+            color: #fff;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        nav a:hover {
+            background-color: #4CAF50;
+            transform: scale(1.05);
+        }
+
+        .container {
+            max-width: 800px;
+            padding: 2rem;
+        }
+
+        .section {
+            margin: 2rem 0;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease-out forwards;
+        }
+
+        .section:nth-child(odd) {
+            animation-delay: 0.3s;
+        }
+
+        .section:nth-child(even) {
+            animation-delay: 0.6s;
+        }
+
+        .section h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        textarea {
+            font-size: 1rem;
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: none;
+            min-height: 100px;
+            margin-bottom: 1rem;
+        }
+
+        button {
+            padding: 0.75rem;
+            font-weight: bold;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .result {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 6px;
+            color: #fff;
+            text-align: center;
+        }
+
+        .result.positive {
+            background-color: #4CAF50;
+        }
+
+        .result.neutral {
+            background-color: #ff9800;
+        }
+
+        .result.negative {
+            background-color: #f44336;
+        }
+
+        .error-message {
+            color: #f44336;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-top: 1rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem;
+            font-size: 0.9rem;
+            color: #777;
+            background-color: #f4f4f4;
+            width: 100%;
+            position: fixed;
+            bottom: 0;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInDown {
+            from { transform: translateY(-100px); }
+            to { transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Review Analysis Bot</h1>
+        <p>Analyze reviews and gain insights with AI-powered analysis!</p>
+    </header>
+    
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#analyze">Analyze Review</a>
+        <a href="#contact">Contact</a>
+    </nav>
+
+    <div class="container">
+        <div id="home" class="section">
+            <h2>Welcome to the Review Analysis Bot</h2>
+            <p>This bot allows you to analyze customer reviews and extract insights such as sentiment, keywords, and summary. Perfect for businesses, developers, and anyone wanting to understand customer feedback better.</p>
+        </div>
+    
+        <div id="about" class="section">
+            <h2>About the Bot</h2>
+            <p>Powered by advanced NLP algorithms and machine learning models, the Review Analysis Bot uses sentiment analysis to help you understand the core of each review.</p>
+        </div>
+    
+        <div id="analyze" class="section">
+            <h2>Analyze a Review</h2>
+
+            <form id="reviewForm">
+                <label for="text">Enter your review text:</label>
+                <textarea id="text" name="text" placeholder="Type your review here..." required></textarea>
+                <button type="button" onclick="analyzeReview()">Analyze Sentiment</button>
+            </form>
+
+            <div id="resultContainer"></div>
+            <div id="loading" style="display: none;">Loading...</div>
+        </div>
+    </div>
+
+    
+    <footer>
+        © 2024 Prabha Suresh. All rights reserved.
+    </footer>
+
+    <script>
+        function analyzeReview() {
+            const text = document.getElementById('text').value;
+            const resultContainer = document.getElementById('resultContainer');
+            const loading = document.getElementById('loading');
+            
+            if (!text) {
+                resultContainer.innerHTML = '<p class="error-message">Please enter a review text.</p>';
+                return;
+            }
+
+            loading.style.display = 'block';
+
+            
+            fetch("/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: new URLSearchParams({ text: text })
+            })
+            .then(response => response.json())
+            .then(data => {
+                loading.style.display = 'none';
+                resultContainer.innerHTML = ''; 
+                if (data.error_message) {
+                    resultContainer.innerHTML = `<p class="error-message">${data.error_message}</p>`;
+                } else {
+                    resultContainer.innerHTML = `<div class="result ${data.review.toLowerCase()}">
+                        <p>Sentiment: ${data.review}</p>
+                    </div>`;
+                }
+            })
+            .catch(error => {
+                loading.style.display = 'none';
+                resultContainer.innerHTML = `<p class="error-message">An error occurred: ${error}</p>`;
+            });
+        }
+    </script>
+
+</body>
+</html>

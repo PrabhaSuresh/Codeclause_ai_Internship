@@ -1,0 +1,6 @@
+train: D:\Prabha\Code_clause_ai_intern\CodeClauseinternship_gesture_regonintion\data\train
+val: D:\Prabha\Code_clause_ai_intern\CodeClauseinternship_gesture_regonintion\data\valid
+test: D:\Prabha\Code_clause_ai_intern\CodeClauseinternship_gesture_regonintion\data\test
+
+nc: 24
+names: ['Call-Me', 'Fingers-Crossed', 'Fingers-Spread', 'Hand-Raised', 'Heart', 'Italian-Gesture', 'Left-Fist', 'Live-Long-Prosper', 'Love-You', 'Middle', 'Okay', 'Oncoming-Punch', 'Peace', 'Pinched-Fingers', 'Point-Down', 'Point-Left', 'Point-Right', 'Pointing-Up', 'Praying-Hands', 'Raised-Fist', 'Right-Fist', 'Rock', 'Thumbs-Down', 'Thumbs-Up']
